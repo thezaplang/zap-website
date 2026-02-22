@@ -1,14 +1,14 @@
 ---
 template: splash
 title: " "
-description: ZAP is a modern, high-level systems programming language compiled to native code, featuring garbage collection and a lightweight concurrency model.
+description: ZAP is a modern, high-level systems programming language compiled to native code, featuring Automatic Reference Counting (ARC) and a lightweight concurrency model.
 head:
   - tag: title
     content: ZAP Programming Language | Modern Systems Programming
   - tag: meta
     attrs:
       name: keywords
-      content: zap, programming language, systems programming, native code, garbage collection, concurrency, llm, zaplang
+      content: zap, programming language, systems programming, native code, ARC, concurrency, llm, zaplang
   - tag: meta
     attrs:
       property: og:title
@@ -16,9 +16,9 @@ head:
   - tag: meta
     attrs:
       property: og:description
-      content: Modern, high-level systems programming language compiled to native code, with garbage collection and a lightweight concurrency model.
+      content: Modern, high-level systems programming language compiled to native code, with Automatic Reference Counting (ARC) and a lightweight concurrency model.
 hero:
-  tagline: Modern, high-level systems programming language compiled to native code, with garbage collection and a lightweight concurrency model.
+  tagline: Modern, high-level systems programming language compiled to native code, with Automatic Reference Counting (ARC) and a lightweight concurrency model.
   image:
     file: ../../assets/Logo.svg
   actions:
@@ -32,27 +32,25 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
 ## Why Zap Beats Go
 <CardGrid stagger>
   <Card title="Error handling" icon="error">
-    try / catch / throw<br/>
-    Result&lt;T, E&gt; and optional types<br/>
+    try-catch blocks<br/>
     No more if err != nil everywhere.
   </Card>
 
   <Card title="Sum types / Enums" icon="star">
-    real enums with variants
+    Real enums and records.
   </Card>
 
   <Card title="Pattern matching" icon="puzzle">
-    match statements for control flow based on value structure
+    Match statements for powerful control flow (Coming Soon).
   </Card>
 
-  <Card title="Better if" icon="information">
-    if is now expression, not statement <br/>
-    ternary operator
+  <Card title="Control Flow" icon="information">
+    If is an expression, not a statement.<br/>
   </Card>
 
-  <Card title="Targets & optimization" icon="setting">
-    LLVM backend with its optimizations<br/>
-    Multiple target architectures(x86, ARM, RISC-V, WebAssembly, embedded and more!)
+  <Card title="Memory Management" icon="setting">
+    Automatic Reference Counting (ARC).<br/>
+    No garbage collection pauses, predictable performance.
   </Card>
 </CardGrid>
 
