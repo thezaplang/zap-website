@@ -46,7 +46,7 @@ gtag('js', new Date());
 gtag('config', 'G-LP0QD3PR4L');`,
 				},
 			],
-			social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/thezaplang/zap' },{icon: 'discord', label: 'Discord', href: 'https://discord.gg/tfbE5Cps5j'}],
+			social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/thezaplang/zap' }, { icon: 'discord', label: 'Discord', href: 'https://discord.gg/tfbE5Cps5j' }],
 			sidebar: [
 				{
 					label: "Getting started",
@@ -58,8 +58,11 @@ gtag('config', 'G-LP0QD3PR4L');`,
 						// Each item here is one entry in the navigation menu.
 						{ label: 'Installing from source', slug: 'guides/install_src' },
 						{ label: 'Your first ZAP program', slug: 'guides/first_program' },
-						{ label: 'declaring variables', slug: 'guides/declaring_variables' },
-						{ label: 'Caling a functions', slug: 'guides/calling_functions' },
+						{ label: 'Declaring Variables', slug: 'guides/declaring_variables' },
+						{ label: 'Functions', slug: 'guides/calling_functions' },
+						{ label: 'Control Flow', slug: 'guides/control_flow' },
+						{ label: 'Data Structures', slug: 'guides/data_structures' },
+						{ label: 'Memory Management', slug: 'guides/memory_management' },
 					],
 				},
 				// {

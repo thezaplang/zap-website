@@ -1,6 +1,6 @@
 ---
 title: First Program
-description: creatig your very own program in Zap!
+description: Creating your very own program in Zap!
 ---
 
 ## Your First Zap Program
@@ -8,7 +8,7 @@ description: creatig your very own program in Zap!
 Create a file called `hello.zap`:
 
 ```zap
-fn main() {
+fun main() {
     println("Hello, Zap!");
 }
 ```

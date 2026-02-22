@@ -1,18 +1,37 @@
 ---
-title: How to call a function in Zap
+title: Functions
+description: How to define and call functions in Zap
 ---
 
-calling functions is almost identical to any other language
-all we need to know is what arguments it accepts and what is returned, and of course what it does
+Functions are declared using the `fun` keyword. They can have parameters and a return type.
 
-as we showed you in the first example `println` it was nothing else than a simple function call
+## Declaration
 
-Let's assume you have a function like this:
+The return type is specified after the parameter list, without a colon (`:`).
 
 ```zap
-fn add(a: i32, b: i32) -> i32{
-    return a+b;
+fun add(a: Int, b: Int) Int {
+    var result: Int = a + b;
+    return result;
 }
 ```
 
-To call it, just type `add(4,5)` where 4 and 5 are the arguments we pass to the function
+If a function does not return a value, the return type can be omitted (it defaults to `Void`).
+
+```zap
+fun sayHello(name: String) {
+    // some logic here
+}
+```
+
+## Function Calls
+
+Functions are called using the standard C-like syntax:
+
+```zap
+var sum: Int = add(10, 20);
+```
+
+## Recursion
+
+Recursive function calls are fully supported.

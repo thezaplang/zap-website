@@ -18,9 +18,8 @@ description: instaling
 ```bash
 git clone https://github.com/thezaplang/zap.git
 cd zap
-mkdir -p build
-cmake -B build -S .
-cmake --build build
+chmod +x build.sh
+./build.sh
 ```
 
 ### Verify Installation
