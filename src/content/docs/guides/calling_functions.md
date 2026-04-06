@@ -1,37 +1,47 @@
 ---
 title: Functions
-description: How to define and call functions in Zap
+description: Function declarations, return types, and common calling patterns.
 ---
 
-Functions are declared using the `fun` keyword. They can have parameters and a return type.
+## Basic declaration
 
-## Declaration
-
-The return type is specified after the parameter list, without a colon (`:`).
+Functions use `fun`. The return type comes after the parameter list:
 
 ```zap
 fun add(a: Int, b: Int) Int {
-    var result: Int = a + b;
-    return result;
+    return a + b;
 }
 ```
 
-If a function does not return a value, the return type can be omitted (it defaults to `Void`).
+## Void functions
+
+If no value is returned, the return type can be omitted:
 
 ```zap
-fun sayHello(name: String) {
-    // some logic here
+fun logName(name: String) {
+    // ...
 }
 ```
 
-## Function Calls
-
-Functions are called using the standard C-like syntax:
+## Calling functions
 
 ```zap
-var sum: Int = add(10, 20);
+var total: Int = add(10, 20);
 ```
 
-## Recursion
+## More examples
 
-Recursive function calls are fully supported.
+```zap
+fun distance(x: Int, y: Int) Int {
+    return x - y;
+}
+```
+
+```zap
+fun main() Int {
+    var total: Int = add(4, 5);
+    return distance(total, 3);
+}
+```
+
+For overloads, named arguments, references, and varargs, continue with the next guides.

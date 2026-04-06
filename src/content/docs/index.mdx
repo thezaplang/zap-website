@@ -1,24 +1,24 @@
 ---
 template: splash
 title: " "
-description: ZAP is a modern, high-level systems programming language compiled to native code, featuring Automatic Reference Counting (ARC) and a lightweight concurrency model.
+description: Zap is a systems programming language built around ARC, native compilation, modules, classes, and a practical standard library.
 head:
   - tag: title
-    content: ZAP Programming Language | Modern Systems Programming
+    content: Zap Programming Language | ARC Systems Programming
   - tag: meta
     attrs:
       name: keywords
-      content: zap, programming language, systems programming, native code, ARC, concurrency, llm, zaplang
+      content: zap, programming language, systems programming, llvm, arc, classes, modules, stdlib
   - tag: meta
     attrs:
       property: og:title
-      content: ZAP Programming Language
+      content: Zap Programming Language
   - tag: meta
     attrs:
       property: og:description
-      content: Modern, high-level systems programming language compiled to native code, with Automatic Reference Counting (ARC) and a lightweight concurrency model.
+      content: ARC-based systems programming with native compilation, modules, classes, overloads, and optional unsafe code.
 hero:
-  tagline: Modern, high-level systems programming language compiled to native code, with Automatic Reference Counting (ARC) and a lightweight concurrency model.
+  tagline: ARC-based systems programming with native compilation, classes, modules, overloads, and optional unsafe code.
   image:
     file: ../../assets/Logo.svg
   actions:
@@ -26,32 +26,108 @@ hero:
       link: /getting-started/
       icon: right-arrow
       variant: primary
+    - text: GitHub
+      link: https://github.com/thezaplang/zap
+      icon: external
+      variant: secondary
 ---
 import { Card, CardGrid } from '@astrojs/starlight/components';
 
-## Why Zap Beats Go
+<div
+  style={{
+    margin: '1.5rem 0 2rem',
+    padding: '1rem',
+    borderRadius: '16px',
+    border: '1px solid rgba(148, 163, 184, 0.2)',
+    background:
+      'linear-gradient(135deg, rgba(15, 23, 42, 0.96) 0%, rgba(11, 17, 32, 0.96) 100%)',
+    boxShadow: '0 18px 44px rgba(2, 6, 23, 0.22)',
+  }}
+>
+  <div
+    style={{
+      fontSize: '0.78rem',
+      letterSpacing: '0.08em',
+      textTransform: 'uppercase',
+      color: '#7dd3fc',
+      fontWeight: 700,
+      marginBottom: '0.35rem',
+    }}
+  >
+    Install
+  </div>
+  <div
+    style={{
+      fontSize: '1.15rem',
+      fontWeight: 700,
+      color: '#f8fafc',
+      marginBottom: '0.45rem',
+    }}
+  >
+    Install the latest Zap release
+  </div>
+  <p style={{ margin: '0 0 0.9rem', color: '#cbd5e1' }}>
+    Fetch the latest Linux x86_64 release and run the bundled installer.
+  </p>
+  <pre
+    style={{
+      margin: 0,
+      padding: '0.9rem 1rem',
+      overflowX: 'auto',
+      borderRadius: '12px',
+      background: '#020617',
+      border: '1px solid rgba(125, 211, 252, 0.16)',
+      color: '#e2e8f0',
+      fontSize: '0.9rem',
+      lineHeight: 1.4,
+      fontFamily:
+        '"JetBrains Mono", "Fira Code", "IBM Plex Mono", "Menlo", "Monaco", monospace',
+    }}
+  >
+    <code>curl -fsSL https://zaplang.xyz/install-latest.sh | bash</code>
+  </pre>
+</div>
+
+## What You Can Build With Zap
+
 <CardGrid stagger>
-  <Card title="Error handling" icon="error">
-    try-catch blocks<br/>
-    No more if err != nil everywhere.
+  <Card title="ARC and weak refs" icon="setting">
+    Heap-owned classes use ARC, support <code>deinit()</code>, and can break cycles with <code>weak</code>, <code>alive()</code>, and <code>lock()</code>.
   </Card>
 
-  <Card title="Sum types / Enums" icon="star">
-    Real enums and records.
+  <Card title="Classes and inheritance" icon="star">
+    Zap supports heap-only classes, instance methods, visibility modifiers, single inheritance, and dynamic dispatch.
   </Card>
 
-  <Card title="Pattern matching" icon="puzzle">
-    Match statements for powerful control flow (Coming Soon).
+  <Card title="Modules and stdlib" icon="puzzle">
+    Import local modules or <code>std/...</code> modules for IO, strings, process, filesystem, paths, math, memory, and conversions.
   </Card>
 
-  <Card title="Control Flow" icon="information">
-    If is an expression, not a statement.<br/>
+  <Card title="Structured low-level access" icon="error">
+    Raw pointers, casts, manual allocation, and pointer arithmetic are available behind explicit <code>unsafe</code>.
   </Card>
 
-  <Card title="Memory Management" icon="setting">
-    Automatic Reference Counting (ARC).<br/>
-    No garbage collection pauses, predictable performance.
+  <Card title="Practical syntax" icon="information">
+    Structs, enums, aliases, arrays, references with <code>ref</code>, ternary expressions, overloads, named args, and varargs.
+  </Card>
+
+  <Card title="Native pipeline" icon="star">
+    The compiler uses an LLVM backend and can emit executables, object files, textual LLVM IR, or ZIR.
   </Card>
 </CardGrid>
 
+## Why Zap
 
+Zap aims for systems-level control without forcing you into a garbage collector or making everything manual from day one. The language already focuses on a few concrete strengths:
+
+- deterministic ARC for object lifetimes
+- expressive data modeling with structs, enums, and classes
+- a small but useful standard library
+- optional `unsafe` when you need raw pointers or manual allocation
+- native compilation through `zapc`
+
+## Explore By Topic
+
+- Start with syntax and core language in the `Basics` and `Data model` sections.
+- Move to `Object model` for classes, ARC, and weak references.
+- Use the `Standard library` section for module-by-module docs with examples.

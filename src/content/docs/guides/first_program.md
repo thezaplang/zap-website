@@ -1,20 +1,34 @@
 ---
 title: First Program
-description: Creating your very own program in Zap!
+description: Compile and run your first Zap program.
 ---
 
-## Your First Zap Program
-
-Create a file called `hello.zap`:
+Create a file called `hello.zp`:
 
 ```zap
-fun main() {
+import "std/io" { println };
+
+fun main() Int {
     println("Hello, Zap!");
+    return 0;
 }
 ```
 
-Run your program:
+Compile it with the compiler built from `zap/`:
 
 ```bash
-zapc hello.zap
+./zap/build/zapc hello.zp
 ```
+
+By default, `zapc` builds an executable. On Unix-like systems, if you did not pass `-o`, the output is `a.out`:
+
+```bash
+./a.out
+```
+
+## Notes
+
+- `main` usually returns `Int`.
+- Statements end with `;`.
+- Import functions from `std/io` for console output.
+- If you use raw pointers or manual allocation later, compile with `--allow-unsafe`.

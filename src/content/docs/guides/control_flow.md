@@ -1,13 +1,25 @@
 ---
 title: Control Flow
-description: While loops and If expressions in Zap
+description: If, while, break, continue, and ternary expressions in Zap.
 ---
 
-Zap provides simple and powerful control flow structures.
+## `if`
 
-## While Loops
+Zap supports regular conditional statements:
 
-The `while` loop repeatedly executes a block of code while a condition is true. Parentheses around the condition are optional.
+```zap
+if age >= 18 {
+    println("adult");
+} else {
+    println("minor");
+}
+```
+
+`else if` chains are also supported.
+
+## `while`
+
+Parentheses around the condition are optional:
 
 ```zap
 var i: Int = 0;
@@ -16,21 +28,35 @@ while i < 10 {
 }
 ```
 
-## If Expressions
-
-In Zap, `if` is an **expression**, meaning it can return a value. This can be used for conditional assignments.
+This also works:
 
 ```zap
-var age: Int = 18;
-var status: String = if age >= 18 { "adult" } else { "minor" };
-```
-
-You can also use it as a standard statement:
-
-```zap
-if age >= 18 {
-    // some logic here
-} else {
-    // some logic here
+while (i < 10) {
+    i = i + 1;
 }
 ```
+
+## `break` and `continue`
+
+Loop control is supported and covered by the compiler tests:
+
+```zap
+while true {
+    if shouldSkip {
+        continue;
+    }
+    if shouldStop {
+        break;
+    }
+}
+```
+
+## Ternary operator
+
+Conditional expressions use `?:`:
+
+```zap
+var status: String = score >= 50 ? "pass" : "fail";
+```
+
+The condition must be `Bool`, and both branches must be type-compatible.

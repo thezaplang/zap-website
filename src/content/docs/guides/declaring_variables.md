@@ -1,33 +1,42 @@
 ---
-title: Declaring Variables
-description: How to create a variable in Zap
+title: Variables
+description: Declaring variables and understanding the core built-in types in Zap.
 ---
 
-In Zap, all types start with a capital letter (e.g., `Int`, `Float`, `Bool`, `String`).
+## Variables
 
-Variables are declared using the `var` keyword. You can optionally specify a type and provide an initial value.
+Variables use `var` and can be reassigned:
 
 ```zap
-var a: Int = 5;
+var x: Int = 10;
+x = 20;
+```
+
+Type annotations are written after `:`. Zap also allows declaration before assignment:
+
+```zap
+var name: String;
+name = "Zap";
+```
+
+## Built-in types
+
+- `Int`, `Int16`, `Int64`
+- `UInt`, `UInt8`, `UInt16`, `UInt64`
+- `Float`, `Float64`
+- `Bool`
+- `Char`
+- `String`
+- `Void`
+
+## More examples
+
+```zap
+var age: Int = 21;
+var ratio: Float = 1.5;
+var enabled: Bool = true;
+var letter: Char = 'z';
 var name: String = "Zap";
-var isActive: Bool = true;
 ```
 
-Statements in Zap typically end with a semicolon `;`.
-
-## Arrays
-
-Arrays are fixed-size collections of elements of the same type.
-
-```zap
-var simple: [5]Int;
-var initialized: [3]Int = {1, 2, 3};
-```
-
-## Basic Types
-
-- `Int`: 64-bit signed integer.
-- `Float`: 64-bit floating point number.
-- `Bool`: Boolean value (`true` or `false`).
-- `String`: UTF-8 encoded string.
-- `Void`: Used for functions that do not return a value.
+For constants and globals, continue with [Constants and globals](/guides/constants_and_globals/).
