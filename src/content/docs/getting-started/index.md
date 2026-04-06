@@ -36,3 +36,7 @@ If you want a clean learning path through the docs:
 8. Modules and imports
 9. Standard library
 10. Unsafe
+
+## Read the reference
+
+The Doxygen reference documentation for Zap is available [here](https://docs.zaplang.xyz).
