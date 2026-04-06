@@ -86,7 +86,7 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
   >
     <button
       type="button"
-      data-copy="curl -fsSL https://zaplang.xyz/install-latest.sh | bash"
+      data-copy={'bash -c "$(curl -fsSL https://zaplang.xyz/install-latest.sh)"'}
       onclick={`(async function(button){
         const text = button.getAttribute('data-copy') || '';
         const indicator = button.querySelector('[data-copy-label]');
@@ -127,7 +127,7 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
       aria-label="Copy installation command"
     >
       <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem' }}>
-        <code>curl -fsSL https://zaplang.xyz/install-latest.sh | bash</code>
+        <code>{'bash -c "$(curl -fsSL https://zaplang.xyz/install-latest.sh)"'}</code>
         <span style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', gap: '0.55rem' }}>
           <span
             data-copy-toast
