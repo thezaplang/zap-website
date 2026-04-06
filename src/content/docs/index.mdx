@@ -67,7 +67,7 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
     Install the latest Zap release
   </div>
   <p style={{ margin: '0 0 0.9rem', color: '#cbd5e1' }}>
-    Fetch the latest Linux x86_64 release and run the bundled installer.
+    Click the command to copy it, then paste it into your terminal to fetch the latest Linux x86_64 release and run the bundled installer.
   </p>
   <pre
     style={{
@@ -84,7 +84,115 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
         '"JetBrains Mono", "Fira Code", "IBM Plex Mono", "Menlo", "Monaco", monospace',
     }}
   >
-    <code>curl -fsSL https://zaplang.xyz/install-latest.sh | bash</code>
+    <button
+      type="button"
+      data-copy="curl -fsSL https://zaplang.xyz/install-latest.sh | bash"
+      onclick={`(async function(button){
+        const text = button.getAttribute('data-copy') || '';
+        const indicator = button.querySelector('[data-copy-label]');
+        const icon = button.querySelector('[data-copy-icon]');
+        const toast = button.querySelector('[data-copy-toast]');
+        if (!text || !indicator || !icon || !toast) return;
+
+        const setState = (label) => {
+          indicator.textContent = label;
+          icon.style.transform = label === 'Copied' ? 'scale(1.12) rotate(-8deg)' : 'scale(1)';
+          icon.style.color = label === 'Copied' ? '#38bdf8' : '#7dd3fc';
+          toast.style.opacity = label === 'Copied' ? '1' : '0';
+          toast.style.transform = label === 'Copied' ? 'translateY(0)' : 'translateY(-4px)';
+          window.clearTimeout(button._copyTimer);
+          button._copyTimer = window.setTimeout(() => {
+            indicator.textContent = 'Copy installation command';
+            icon.style.transform = 'scale(1)';
+            icon.style.color = '#7dd3fc';
+            toast.style.opacity = '0';
+            toast.style.transform = 'translateY(-4px)';
+          }, 1600);
+        };
+
+        try {
+          if (!navigator.clipboard || !navigator.clipboard.writeText) throw new Error('Clipboard unavailable');
+          await navigator.clipboard.writeText(text);
+          setState('Copied');
+        } catch (error) {
+          setState('Copy failed');
+        }
+      })(this)`}
+      style={{
+        all: 'unset',
+        display: 'block',
+        width: '100%',
+        cursor: 'pointer',
+      }}
+      aria-label="Copy installation command"
+    >
+      <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem' }}>
+        <code>curl -fsSL https://zaplang.xyz/install-latest.sh | bash</code>
+        <span style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', gap: '0.55rem' }}>
+          <span
+            data-copy-toast
+            style={{
+              color: '#38bdf8',
+              fontSize: '0.74rem',
+              fontWeight: 700,
+              letterSpacing: '0.02em',
+              opacity: 0,
+              transform: 'translateY(-4px)',
+              transition: 'opacity 180ms ease, transform 180ms ease',
+              pointerEvents: 'none',
+            }}
+            aria-hidden="true"
+          >
+            Copied!
+          </span>
+          <span
+            data-copy-icon
+            style={{
+              color: '#7dd3fc',
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '1.2rem',
+              height: '1.2rem',
+              whiteSpace: 'nowrap',
+              transition: 'transform 180ms ease, color 180ms ease',
+              transformOrigin: 'center',
+            }}
+            aria-hidden="true"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              style={{ width: '1rem', height: '1rem' }}
+            >
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+            </svg>
+          </span>
+        </span>
+        <span
+          data-copy-label
+          style={{
+            position: 'absolute',
+            width: '1px',
+            height: '1px',
+            padding: 0,
+            margin: '-1px',
+            overflow: 'hidden',
+            clip: 'rect(0, 0, 0, 0)',
+            whiteSpace: 'nowrap',
+            border: 0,
+          }}
+        >
+          Copy installation command
+        </span>
+      </div>
+    </button>
   </pre>
 </div>
 
