@@ -122,4 +122,9 @@ fi
 success "Downloaded and extracted ${TAG_NAME}"
 info "Running bundled installer"
 cd "$INSTALL_DIR"
+
+if [ ! -t 0 ] && [ -r /dev/tty ]; then
+  exec </dev/tty
+fi
+
 exec ./install.sh "$@"
