@@ -74,6 +74,13 @@ gtag('config', 'G-LP0QD3PR4L');`,
 					],
 				},
 				{
+					label: 'Advanced',
+					items: [
+						{ label: 'Generics', slug: 'guides/generics' },
+						{ label: 'Error Handling', slug: 'guides/error_handling' },
+					],
+				},
+				{
 					label: 'Object model',
 					items: [
 						{ label: 'Classes', slug: 'guides/classes' },
