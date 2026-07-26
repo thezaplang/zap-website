@@ -39,11 +39,11 @@ asset_url=$(printf '%s\n' "$release_json" |
 [ -n "$asset_url" ] || die "the latest release does not contain a zapup binary"
 
 info "Downloading zapup ${tag_name}"
-curl --proto '=https' --tlsv1.2 -sSfL "$asset_url" -o "$zapup_path" || die "could not download zapup"
+curl -4 --proto '=https' --tlsv1.2 -sSfL "$asset_url" -o "$zapup_path" || die "could not download zapup"
 chmod +x "$zapup_path" || die "could not make zapup executable"
 
 if [ ! -t 0 ] && [ -r /dev/tty ]; then
   exec < /dev/tty
 fi
 
-exec "$zapup_path" "$@"
+exec "$zapup_path" install "$@"
