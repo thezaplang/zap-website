@@ -44,4 +44,9 @@ chmod +x "$zapup_path" || die "could not make zapup executable"
 info "Downloaded zapup ${tag_name}"
 
 info "Starting zapup install"
+
+if [ -r /dev/tty ]; then
+  exec "$zapup_path" install "$@" < /dev/tty
+fi
+
 exec "$zapup_path" install "$@"
