@@ -43,9 +43,5 @@ curl -4 --proto '=https' --tlsv1.2 -fL --progress-bar "$asset_url" -o "$zapup_pa
 chmod +x "$zapup_path" || die "could not make zapup executable"
 info "Downloaded zapup ${tag_name}"
 
-if [ ! -t 0 ] && [ -r /dev/tty ]; then
-  exec < /dev/tty
-fi
-
 info "Starting zapup install"
 exec "$zapup_path" install "$@"
