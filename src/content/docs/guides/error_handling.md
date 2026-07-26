@@ -1,187 +1,175 @@
 ---
-title: Error Handling
-description: Use failable functions in Zap to handle failures explicitly with fail, ?, or, and or err — no exceptions needed.
+title: Error handling
+description: Define failable functions and handle errors with fail, ?, or, and or err.
 ---
 
-Zap doesn't use exceptions. Instead, functions that can fail declare it explicitly in their return type. This makes error paths visible in the type system and forces callers to handle them.
+Zap represents expected failures in function signatures. A function returning
+`T!E` either produces a `T` or fails with an error value of type `E`.
 
-## Failable functions
+## Define an error type
 
-A failable function has a return type of `ReturnType!ErrorEnum`:
+Mark an `enum`, `struct`, or `class` with `@error`, then use that type after
+`!` in the return type. Choose the representation that fits the error:
+
+| Form | Use it for | Failure value |
+| --- | --- | --- |
+| `@error enum` | A small closed set of cases | `ErrorKind.InvalidInput` |
+| `@error struct` | A value with several fields | `ValidationError { ... }` |
+| `@error class` | A managed error with methods or identity | `new IoError(...)` |
+
+### Enum errors
 
 ```zap
 @error
-enum MathError {
-    DivisionByZero,
-    Overflow,
+enum CheckoutError {
+    EmptyCart,
+    NotEnoughStock,
 }
 
-fun divide(a: Int, b: Int) Int!MathError {
-    if b == 0 {
-        fail MathError.DivisionByZero;
+fun reserveStock(available: Int, requested: Int) Int!CheckoutError {
+    if requested == 0 {
+        fail CheckoutError.EmptyCart;
     }
-    return a / b;
+    if requested > available {
+        fail CheckoutError.NotEnoughStock;
+    }
+    return available - requested;
 }
 ```
 
-- `@error` marks the enum as an error type (required for use in `!` signatures)
-- `fail ErrorEnum.Variant;` signals failure and exits the function immediately
-- `return value;` signals success
+`fail` ends the current function. A successful path returns the value before
+the `!`.
 
----
+### Struct errors
 
-## Three ways to handle a failable call
-
-### 1. Propagate with `?`
-
-The `?` operator propagates the error up to the caller. The calling function must also be failable with a compatible error type:
+Use a struct when callers need data from the failure but the error does not need
+class identity:
 
 ```zap
-fun safeDivide(a: Int, b: Int) Int!MathError {
-    var result: Int = divide(a, b)?;  // propagates on failure
-    return result * 2;
+@error
+struct ValidationError {
+    field: String,
+    message: String,
+}
+
+fun validateName(name: String) Void!ValidationError {
+    if len(name) == 0 {
+        fail ValidationError {
+            field: "name",
+            message: "name is required",
+        };
+        return;
+    }
+    return;
 }
 ```
 
-Use `?` to build chains of failable operations without deeply nested error handling.
-
-### 2. Fallback value with `or`
-
-Provide a default value to use when the call fails:
-
-```zap
-fun main() Int {
-    var result: Int = divide(10, 0) or 0;   // 0 on failure
-    var safe: Int   = divide(10, 2) or -1;  // 5 on success
-    return 0;
-}
-```
-
-The fallback value must have the same type as the success value.
-
-### 3. Local handler with `or err`
-
-Handle the error inline with access to the error value:
+The `or err` block receives the complete struct value:
 
 ```zap
 fun main() Int {
-    var result: Int = divide(10, 0) or err {
-        if err == MathError.DivisionByZero {
-            return 1;  // early return from main
-        }
-        -1  // fallback value for other errors
+    validateName("") or err {
+        eprintln(err.field + ": " + err.message);
+        return 1;
     };
     return 0;
 }
 ```
 
-Inside `or err { ... }`, `err` holds the error enum value. The block must produce a value of the success type (or use `return`/`fail` to exit).
+### Class errors
 
----
-
-## Complete example — order processing pipeline
-
-This example chains multiple failable functions and demonstrates all three handling patterns:
+Use a class when the error has methods or needs a managed reference:
 
 ```zap
-import "std/io" { println, printInt };
-
 @error
-enum DecodeError {
-    InvalidPrefix,
-    InvalidDigit,
-    ValueTooSmall,
-}
+class IoError {
+    priv code: Int;
 
-struct Order {
-    region: Int,
-    sequence: Int,
-}
-
-fun decodeRegion(prefix: Int) Int!DecodeError {
-    if prefix == 10 || prefix == 20 || prefix == 30 {
-        return prefix;
+    fun init(code: Int) {
+        self.code = code;
     }
-    fail DecodeError.InvalidPrefix;
-    return 0;
+
+    pub fun codeValue() Int {
+        return self.code;
+    }
 }
 
-fun decodeSequence(raw: Int) Int!DecodeError {
-    if raw < 0    { fail DecodeError.InvalidDigit; }
-    if raw < 1000 { fail DecodeError.ValueTooSmall; }
-    return raw;
+fun openConfig(ok: Bool) String!IoError {
+    if !ok {
+        fail new IoError(2);
+    }
+    return "config loaded";
 }
+```
 
-// Chain with ? — propagates any error from inner calls
-fun decodeOrder(prefix: Int, seq: Int) Order!DecodeError {
-    var region: Int   = decodeRegion(prefix)?;
-    var sequence: Int = decodeSequence(seq)?;
-    return Order{ region: region, sequence: sequence };
+Handle a class error through its public methods:
+
+```zap
+fun main() String {
+    var config = openConfig(false) or err {
+        eprintln("open failed: " + toString(err.codeValue()));
+        return "default";
+    };
+    return config;
 }
+```
 
+The `@error` annotation is required for every type used as `E` in `T!E`.
+An ordinary enum, struct, or class without that annotation is rejected by the
+compiler.
+
+## Propagate an error with `?`
+
+Use `?` when the current function should return the same error to its caller:
+
+```zap
+fun checkout(available: Int, requested: Int) Int!CheckoutError {
+    var remaining = reserveStock(available, requested)?;
+    println("Order reserved.");
+    return remaining;
+}
+```
+
+The enclosing function must have a compatible failable return type.
+
+## Supply a fallback with `or`
+
+If a failure has a sensible default, place it after `or`:
+
+```zap
+var remaining = reserveStock(2, 5) or 0;
+```
+
+The fallback must have the successful return type.
+
+## Handle the error locally
+
+An `or err` block exposes the error value:
+
+```zap
 fun main() Int {
-    // Pattern 1: ? (propagation) — used inside decodeOrder above
-
-    // Pattern 2: or (fallback value)
-    var ok: Order = decodeOrder(20, 12345) or Order{ region: 0, sequence: 0 };
-    var fb: Order = decodeOrder(99, 7777)  or Order{ region: -1, sequence: -1 };
-
-    // Pattern 3: or err (local handler)
-    var handled: Order = decodeOrder(10, 12) or err {
-        if err == DecodeError.ValueTooSmall {
-            Order{ region: 10, sequence: 1000 }
+    var remaining = checkout(8, 3) or err {
+        if err == CheckoutError.EmptyCart {
+            eprintln("The cart is empty.");
         } else {
-            Order{ region: -1, sequence: -1 }
+            eprintln("Not enough stock.");
         }
+        return 1;
     };
 
-    println("region:");
-    printInt(ok.region);       // 20
-    println("fallback region:");
-    printInt(fb.region);       // -1
-    println("handled sequence:");
-    printInt(handled.sequence); // 1000
-
+    println("Items left: " + toString(remaining));
     return 0;
 }
 ```
 
----
+The block must either produce a fallback value or leave the enclosing function
+with `return` or `fail`.
 
-## Minimal example
+| Form | Use it when |
+| --- | --- |
+| `call()?` | The caller should handle the same error |
+| `call() or value` | A default value is enough |
+| `call() or err { ... }` | Handling depends on the error value |
 
-```zap
-@error
-enum TinyError { TooSmall }
-
-fun ensureMin(value: Int) Int!TinyError {
-    if value < 10 { fail TinyError.TooSmall; }
-    return value;
-}
-
-fun main() Int {
-    var ok: Int = ensureMin(12) or 0;   // 12
-    var fb: Int = ensureMin(3)  or 99;  // 99 (fallback)
-
-    return 0;
-}
-```
-
----
-
-## Choosing the right pattern
-
-| Pattern | When to use |
-|---------|-------------|
-| `?` | You want to propagate the error to the caller |
-| `or value` | You have a sensible default and don't need to inspect the error |
-| `or err { }` | You need to inspect the error type and handle different cases |
-
----
-
-## Common Diagnostics
-
-| Code | Meaning |
-|------|---------|
-| `S2001` | Undefined error enum variant |
-| `S2002` | Type mismatch — fallback value type doesn't match success type |
+Zap does not use exceptions for these failure paths. The error is visible both
+at the function declaration and at the call site.

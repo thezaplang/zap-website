@@ -1,74 +1,32 @@
 ---
 title: std/prelude
-description: Symbols available in every Zap program without an explicit import.
+description: Names imported automatically into ordinary Zap programs.
 ---
 
-`std/prelude` re-exports the most commonly used functions from the standard library. These symbols are available in every Zap program without any `import` statement.
+Unless compilation uses `-noprelude`, Zap imports `std/prelude` automatically.
+You can use its names without writing an import.
 
-## Automatically available symbols
+## Available names
 
-The following functions work without any import:
-
-```zap
-// From std/io
-println(s: String) Void
-printInt(i: Int) Void
-printFloat(f: Float) Void
-printBool(b: Bool) Void
-printChar(c: Char) Void
-eprintln(s: String) Void
-getLn() String
-```
-
-That's why simple programs like this work without any imports:
+| Area | Names |
+| --- | --- |
+| Core strings | `StringView`, `len`, `at`, `slice`, `eq`, `view`, `startsWith`, `indexOf` |
+| Output | `print`, `println`, `eprintln` |
+| String helpers | `stringLen`, `fromChar`, `pushChar`, `trim`, `splitOnce`, `SplitPair` |
+| Conversion | `toString`, `toInt`, `toBool`, `parseInt`, `ParseIntError` |
+| Collections | `List`, `HashMap` |
+| String collections | `split`, `splitN`, `splitTrimmed`, `join` |
 
 ```zap
 fun main() Int {
-    println("Hello, Zap!");
-    printInt(42);
+    var names = new List<String>();
+    names.push("Ada");
+    names.push("Grace");
+
+    println("Count: " + toString(names.len()));
     return 0;
 }
 ```
 
-## Importing prelude explicitly
-
-You can also import `std/prelude` to get additional re-exported symbols:
-
-```zap
-import "std/prelude" { println, printInt, cwd, join, toString };
-
-fun main() Int {
-    println(cwd());
-    println(join("/tmp", "output.txt"));
-    println(toString(42));
-    printInt(42);
-    return 0;
-}
-```
-
-## Re-exported modules
-
-`std/prelude` pulls in APIs from:
-
-| Source module | What's re-exported |
-|--------------|-------------------|
-| `std/io` | `println`, `printInt`, `printFloat`, `printBool`, `printChar`, `eprintln`, `getLn` |
-| `std/process` | `cwd`, `exit`, `argc`, `argv` |
-| `std/path` | `join`, `basename`, `parent` |
-| `std/string` | `len`, `fromChar`, `pushChar`, `eq` |
-| `std/convert` | `toString`, `toInt`, `toFloat`, `toBool`, `toChar` |
-| `std/error` | `Error`, `ErrorKind`, `Err`, `Kind` |
-| `std/math` | `abs`, `min`, `max`, `sqrt`, `floor`, `ceil` |
-
-## Example — using prelude functions
-
-```zap
-import "std/prelude" { println, printInt, toString, abs };
-
-fun main() Int {
-    var n: Int = -42;
-    println("Absolute value of " ~ toString(n) ~ " is " ~ toString(abs(n)));
-    printInt(abs(n));  // 42
-    return 0;
-}
-```
+The prelude is deliberately smaller than the complete standard library. Import
+modules such as `std/fs`, `std/path`, or `std/math` when their APIs are needed.

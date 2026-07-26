@@ -50,16 +50,6 @@ export function extractCodeBlocks(content) {
 }
 
 /**
- * Check whether a string contains at least one diagnostic code reference.
- * Matches patterns like S2001, P1001, W1001, N1001, E1001.
- * @param {string} content
- * @returns {boolean}
- */
-export function hasDiagnosticCode(content) {
-  return /[PSWNEpswen]\d{4}/.test(content);
-}
-
-/**
  * Read a file and return its content as a string.
  * @param {string} filePath
  * @returns {string}

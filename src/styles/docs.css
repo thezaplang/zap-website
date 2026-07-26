@@ -1,0 +1,335 @@
+:root {
+  color-scheme: dark;
+  --sl-color-accent-low: #3e3047;
+  --sl-color-accent: #ff6b3d;
+  --sl-color-accent-high: #ffb18d;
+  --sl-color-white: #ffffff;
+  --sl-color-gray-1: #e8eef8;
+  --sl-color-gray-2: #aebbd0;
+  --sl-color-gray-3: #7891aa;
+  --sl-color-gray-4: #3d5274;
+  --sl-color-gray-5: #20385f;
+  --sl-color-gray-6: #101f3b;
+}
+
+html,
+body {
+  background: #101f3b;
+}
+
+body {
+  color: #ffffff;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  overflow-x: clip;
+}
+
+img,
+svg,
+video,
+iframe {
+  max-inline-size: 100%;
+}
+
+.sl-markdown-content {
+  min-inline-size: 0;
+}
+
+.sl-markdown-content :where(h1, h2, h3, h4, p, li, a, td, th) {
+  overflow-wrap: anywhere;
+}
+
+a:focus-visible,
+button:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid #ffb18d;
+  outline-offset: 3px;
+}
+
+.page > header.header {
+  height: 4.75rem;
+  padding: 0;
+  border-bottom: 1px solid rgba(210, 224, 247, .16);
+  background: rgba(20, 39, 72, .78);
+  backdrop-filter: blur(14px) saturate(120%);
+  -webkit-backdrop-filter: blur(14px) saturate(120%);
+}
+
+.docs-header-inner {
+  width: 100%;
+  height: 100%;
+  padding-inline: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.docs-brand img {
+  display: block;
+  width: 2.35rem;
+  height: 2.35rem;
+}
+
+.docs-nav {
+  display: flex;
+  gap: 1.75rem;
+  margin-left: auto;
+  color: #aebbd0;
+  font-size: .88rem;
+}
+
+.docs-nav a,
+.docs-nav a:visited,
+.docs-header-link,
+.docs-header-link:visited {
+  color: inherit;
+  text-decoration: none;
+}
+
+header .docs-nav a:hover,
+header .docs-header-link:hover,
+header .docs-nav a:focus-visible,
+header .docs-header-link:focus-visible {
+  color: #ff6b3d !important;
+}
+
+.docs-nav a[aria-current="page"] {
+  color: #ffffff;
+}
+
+.docs-header-divider {
+  width: 1px;
+  height: 1.2rem;
+  background: rgba(210, 224, 247, .2);
+}
+
+.docs-header-link {
+  color: #ffffff;
+  font-size: .86rem;
+  font-weight: 650;
+}
+
+.docs-header-link span {
+  color: #ffb18d;
+}
+
+@media (max-width: 50rem) {
+  .docs-header-inner {
+    padding-inline: 1rem;
+  }
+
+  .docs-nav {
+    display: none;
+  }
+
+  .docs-header-link {
+    margin-left: auto;
+  }
+}
+
+.header a:hover,
+.sidebar-content a:hover,
+.sl-markdown-content a:hover {
+  color: #ffb18d;
+}
+
+.sidebar-pane {
+  border-right: 1px solid rgba(210, 224, 247, .14);
+  background: #101f3b;
+}
+
+.sidebar-content a[aria-current="page"] {
+  border-inline-start-color: #ff6b3d;
+  background: #3e3047;
+  color: #ffffff;
+}
+
+.sidebar-content details > summary {
+  color: #aebbd0;
+}
+
+.main-pane,
+.content-panel {
+  background: #101f3b;
+}
+
+.main-frame {
+  background: #101f3b;
+}
+
+.sl-markdown-content {
+  color: #e8eef8;
+}
+
+.sl-markdown-content h1,
+.sl-markdown-content h2,
+.sl-markdown-content h3,
+.sl-markdown-content h4 {
+  color: #ffffff;
+  letter-spacing: -.045em;
+}
+
+.sl-markdown-content h1 {
+  font-size: clamp(2.4rem, 5vw, 4.5rem);
+  line-height: .98;
+}
+
+.sl-markdown-content h2 {
+  margin-top: 3.5rem;
+  font-size: clamp(1.8rem, 3vw, 2.8rem);
+}
+
+.sl-markdown-content h3 {
+  font-size: 1.5rem;
+}
+
+.sl-markdown-content p,
+.sl-markdown-content li {
+  color: #c3cee0;
+}
+
+.sl-markdown-content strong {
+  color: #ffffff;
+}
+
+.sl-markdown-content a {
+  color: #ffb18d;
+  text-decoration-color: rgba(255, 177, 141, .45);
+}
+
+.sl-markdown-content :not(pre) > code {
+  border: 1px solid rgba(255, 177, 141, .22);
+  border-radius: .35rem;
+  background: rgba(62, 48, 71, .72);
+  color: #ffb18d;
+}
+
+.sl-markdown-content pre,
+.expressive-code .frame {
+  max-inline-size: 100%;
+  border: 1px solid rgba(210, 224, 247, .2);
+  border-radius: 1rem;
+  background: #172a4c;
+  box-shadow: 0 18px 45px rgba(3, 12, 28, .2);
+  overflow: hidden;
+}
+
+.expressive-code figcaption.header {
+  display: none;
+}
+
+.sl-markdown-content pre {
+  max-width: 100%;
+  overflow-x: auto;
+  padding: 1.4rem 1.2rem;
+  color: #e8eef8;
+}
+
+.expressive-code pre {
+  background: #172a4c;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.sl-markdown-content blockquote {
+  border-inline-start: 3px solid #ff6b3d;
+  background: rgba(62, 48, 71, .35);
+  color: #c3cee0;
+}
+
+.sl-markdown-content table {
+  display: table !important;
+  width: 100%;
+  border: 1px solid rgba(210, 224, 247, .2);
+  border-collapse: collapse;
+  border-spacing: 0;
+  table-layout: fixed;
+  border-radius: .8rem;
+  overflow: hidden !important;
+  background: rgba(23, 42, 76, .62);
+}
+
+.sl-markdown-content thead,
+.sl-markdown-content tbody,
+.sl-markdown-content tr {
+  width: 100%;
+}
+
+.sl-markdown-content th:first-child,
+.sl-markdown-content td:first-child {
+  width: 24%;
+}
+
+.sl-markdown-content th {
+  padding: .85rem 1rem;
+  border-bottom: 1px solid rgba(210, 224, 247, .2);
+  background: #20385f;
+  color: #ffffff;
+  font-size: .78rem;
+  letter-spacing: .04em;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.sl-markdown-content td,
+.sl-markdown-content th {
+  border-color: rgba(210, 224, 247, .16);
+}
+
+.sl-markdown-content td {
+  padding: .85rem 1rem;
+  color: #c3cee0;
+  vertical-align: top;
+}
+
+.sl-markdown-content tbody tr + tr td {
+  border-top: 1px solid rgba(210, 224, 247, .12);
+}
+
+.sl-markdown-content tbody tr:hover td {
+  background: rgba(62, 48, 71, .28);
+}
+
+.sl-markdown-content hr {
+  border-color: rgba(210, 224, 247, .16);
+}
+
+.pagination-links a,
+.sl-link-card {
+  border-color: rgba(210, 224, 247, .18);
+  background: #172a4c;
+  color: #ffffff;
+  transition: border-color 160ms ease, background 160ms ease;
+}
+
+.pagination-links a:hover,
+.sl-link-card:hover {
+  border-color: #ff6b3d;
+  background: #20385f;
+}
+
+.starlight-aside {
+  border-color: rgba(255, 177, 141, .35);
+  background: rgba(62, 48, 71, .42);
+}
+
+@media (max-width: 50rem) {
+  .docs-header-inner {
+    min-width: 0;
+  }
+
+  .sl-markdown-content h1 {
+    font-size: clamp(2rem, 10vw, 2.7rem);
+  }
+
+  .sl-markdown-content pre {
+    border-radius: .75rem;
+    padding: 1rem .85rem;
+    font-size: .85rem;
+  }
+
+  .sl-markdown-content table {
+    display: block !important;
+    overflow-x: auto !important;
+    table-layout: auto;
+  }
+}

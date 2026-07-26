@@ -1,0 +1,327 @@
+---
+import Logo from '../assets/Logo.svg';
+import CodePanel from '../components/CodePanel.astro';
+import { createHighlighter } from 'shiki';
+import { Cable, CircleAlert, MemoryStick } from 'lucide-react';
+import zapGrammar from '../zap.tmLanguage.json';
+import '../styles/landing.css';
+
+const zapHighlighter = await createHighlighter({ langs: [zapGrammar], themes: ['github-dark-default'] });
+const highlightZap = (code) => zapHighlighter.codeToHtml(code, { lang: 'zap', theme: 'github-dark-default' });
+
+const helloExample = highlightZap(`fun main() {
+    println("Hello, Zap!");
+}`);
+
+const errorExample = highlightZap(`@error
+enum TinyError {
+    TooSmall,
+}
+
+fun ensureMin10(value: Int) Int!TinyError {
+    if value < 10 {
+        fail TinyError.TooSmall;
+    }
+    return value;
+}
+
+fun main() {
+    var ok: Int = ensureMin10(12) or 0;   // success -> 12
+    var fb: Int = ensureMin10(3) or 99;   // failure -> fallback 99
+
+    if ok != 12 { return 1; }
+    if fb != 99 { return 2; }
+
+}`);
+
+const genericExample = highlightZap(`class Box {
+    priv value: Int;
+
+    fun init(value: Int) {
+        self.value = value;
+    }
+
+    pub fun pick<T>(other: T) T {
+        return other;
+    }
+
+    pub fun current() Int {
+        return self.value;
+    }
+}
+
+fun main() {
+    var box: Box = new Box(7);
+    if box.current() != 7 {
+        return 1;
+    }
+    if box.pick<Int>(42) != 42 {
+        return 2;
+    }
+    if box.pick(true) != true {
+        return 3;
+    }
+}`);
+
+const safeExample = highlightZap(`// In C, returning a pointer into a temporary packet would create a dangling
+// pointer. Zap tracks which String owns every borrowed StringView instead.
+
+fun receivePacket() String {
+    return "event:deploy";
+}
+
+fun payload(packet: StringView) StringView borrows(packet) {
+    return slice(packet, 6, packet.len - 6);
+}
+
+fun printPayload(value: noescape StringView) {
+    println("Payload: " + value);
+}
+
+fun main() Int {
+    // The returned view borrows from a temporary String. Zap keeps that hidden
+    // owner alive until the view's last use, so this cannot become use-after-free.
+    var temporaryPayload: StringView = payload(receivePacket());
+    printPayload(temporaryPayload);
+
+    var packet = "event:first";
+    var firstPayload: StringView = payload(packet);
+    packet = "event:second";
+    printPayload(firstPayload);
+
+    return 0;
+}`);
+
+const checkoutExample = highlightZap(`@error
+enum CheckoutError {
+    EmptyCart,
+    NotEnoughStock,
+}
+
+fun reserveStock(available: Int, requested: Int) Int!CheckoutError {
+    if requested == 0 {
+        fail CheckoutError.EmptyCart;
+    }
+    if requested > available {
+        fail CheckoutError.NotEnoughStock;
+    }
+    return available - requested;
+}
+
+fun checkout(available: Int, requested: Int) Int!CheckoutError {
+    var remaining = reserveStock(available, requested)?;
+    println("Order reserved.");
+    return remaining;
+}
+
+fun main() Int {
+    var remaining = checkout(8, 3) or err {
+        if err == CheckoutError.EmptyCart {
+            eprintln("Add at least one item before checkout.");
+        } else {
+            eprintln("The requested quantity is not available.");
+        }
+        return 1;
+    };
+
+    println("Items left in stock: " + toString(remaining));
+    return 0;
+}`);
+
+const legacyExample = highlightZap(`@repr("C")
+struct LegacyJob {
+    id: Int32,
+    priority: Int32
+}
+
+ext fun qsort(
+    base: *Void,
+    count: Int,
+    elementSize: Int,
+    compare: *fun(*Void, *Void) Int32
+) Void;
+
+// qsort calls this Zap function using the C ABI.
+@extern("C")
+fun compareJobs(left: *Void, right: *Void) Int32 {
+    unsafe {
+        var a: LegacyJob = *(left as *LegacyJob);
+        var b: LegacyJob = *(right as *LegacyJob);
+
+        if a.priority < b.priority { return -1; }
+        if a.priority > b.priority { return 1; }
+    }
+    return 0;
+}
+
+fun main() Int {
+    var jobs: [3]LegacyJob;
+    jobs[0] = LegacyJob { id: 101, priority: 30 };
+    jobs[1] = LegacyJob { id: 102, priority: 10 };
+    jobs[2] = LegacyJob { id: 103, priority: 20 };
+
+    unsafe {
+        var comparator: *fun(*Void, *Void) Int32 = compareJobs;
+        qsort(&jobs[0] as *Void, 3, sizeof(LegacyJob), comparator);
+    }
+
+    println("Highest priority job: " + toString(jobs[0].id as Int));
+    return 0;
+}`);
+
+const placeholderExample = highlightZap(`// Lorem ipsum dolor sit amet.
+// Consectetur adipiscing elit.
+// Sed do eiusmod tempor.
+// Ut enim ad minim veniam.
+// Quis nostrud exercitation.`);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="/zap-favicon.svg" type="image/svg+xml" />
+    <title>Zap Programming Language</title>
+    <meta name="description" content="Zap is an ARC-based systems programming language with native compilation and a practical standard library." />
+  </head>
+  <body class="zap-landing">
+    <header class="site-header">
+      <div class="shell header-inner">
+        <a class="brand" href="/" aria-label="Zap home"><img src={Logo.src} alt="Zap" /></a>
+        <nav aria-label="Main navigation">
+          <a href="/getting-started/">Docs</a>
+          <a href="https://discord.gg/tfbE5Cps5j">Community</a>
+          <a href="https://github.com/thezaplang/zap">GitHub</a>
+        </nav>
+        <span class="header-divider" aria-hidden="true"></span>
+        <a class="header-link" href="/getting-started/">Install <span aria-hidden="true">↗</span></a>
+      </div>
+    </header>
+
+    <main>
+      <section class="landing-hero shell">
+        <div class="hero-copy">
+          <h1>Build fast, reliable software <span>without giving up control.</span></h1>
+          <ul class="hero-points">
+            <li>Readable from the first line to the last</li>
+            <li>Automatic where it helps. Explicit where it matters.</li>
+            <li>Native binaries without a heavyweight runtime</li>
+            <li>Built for tools, applications, and systems work</li>
+          </ul>
+          <div class="hero-actions">
+            <a class="button button-primary" href="/getting-started/">Get started <span aria-hidden="true">→</span></a>
+          </div>
+        </div>
+        <div class="hero-code code-panel">
+          <div class="code-tabs" role="tablist" aria-label="Code examples">
+            <button class="code-tab is-active" id="tab-hello" type="button" role="tab" aria-selected="true" aria-controls="code-hello" data-example="hello">Hello world</button>
+            <button class="code-tab" id="tab-error" type="button" role="tab" aria-selected="false" aria-controls="code-error" data-example="error">Errors</button>
+            <button class="code-tab" id="tab-generic" type="button" role="tab" aria-selected="false" aria-controls="code-generic" data-example="generic">Generics</button>
+          </div>
+          <div class="code-example" id="code-hello" role="tabpanel" aria-labelledby="tab-hello" data-code-example="hello">
+            <div class="code-rendered" set:html={helloExample}></div>
+          </div>
+          <div class="code-example" id="code-error" role="tabpanel" aria-labelledby="tab-error" data-code-example="error" hidden>
+            <div class="code-rendered" set:html={errorExample}></div>
+          </div>
+          <div class="code-example" id="code-generic" role="tabpanel" aria-labelledby="tab-generic" data-code-example="generic" hidden>
+            <div class="code-rendered" set:html={genericExample}></div>
+          </div>
+        </div>
+      </section>
+
+      <script>
+        const codeTabs = document.querySelectorAll('.code-tab');
+        const codeExamples = document.querySelectorAll('[data-code-example]');
+
+        codeTabs.forEach((tab) => {
+          tab.addEventListener('click', () => {
+            const example = tab.dataset.example;
+
+            codeTabs.forEach((item) => {
+              const isActive = item === tab;
+              item.classList.toggle('is-active', isActive);
+              item.setAttribute('aria-selected', String(isActive));
+            });
+
+            codeExamples.forEach((panel) => {
+              panel.hidden = panel.dataset.codeExample !== example;
+            });
+          });
+        });
+      </script>
+
+      <section class="section intro-feature shell">
+        <div class="intro-feature-list">
+          <article class="intro-feature-item">
+            <span class="intro-feature-icon" aria-hidden="true"><MemoryStick size={32} strokeWidth={1.75} /></span>
+            <div>
+              <h2>Predictable memory</h2>
+              <p>Zap’s memory management provides deterministic object lifetimes without stop-the-world pauses.</p>
+            </div>
+          </article>
+          <article class="intro-feature-item">
+            <span class="intro-feature-icon" aria-hidden="true"><CircleAlert size={32} strokeWidth={1.75} /></span>
+            <div>
+              <h2>Explicit error handling</h2>
+              <p>Errors are explicit in the type system, so you can handle failures without exceptions or hidden runtime behavior.</p>
+            </div>
+          </article>
+          <article class="intro-feature-item">
+            <span class="intro-feature-icon" aria-hidden="true"><Cable size={32} strokeWidth={1.75} /></span>
+            <div>
+              <h2>Built to interoperate</h2>
+              <p>Call C libraries through FFI and introduce Zap to an existing codebase one component at a time.</p>
+            </div>
+          </article>
+        </div>
+        <div class="intro-feature-copy">
+          <h2>Native performance, without the baggage.</h2>
+          <p>Zap is built for software that needs native performance and direct access to the hardware, without forcing every program to manage memory by hand.</p>
+          <p>Use the libraries you already rely on and adopt Zap gradually, without rewriting an entire codebase.</p>
+        </div>
+      </section>
+
+      <section class="section uses-section shell">
+        <div class="section-intro">
+          <h2>Build with Zap</h2>
+          <p>From small command line tools to low-level software, Zap gives you a clear path from idea to native code.</p>
+        </div>
+        <div class="use-stage">
+          <div class="use-grid">
+            <a class="use-card" href="/guides/command_line/"><span class="use-icon" aria-hidden="true">⌁</span><h3>Command line</h3><p>Create powerful CLI tools that are fast and easy to distribute.</p></a>
+            <a class="use-card" href="/guides/native_software/"><span class="use-icon" aria-hidden="true">◌</span><h3>Native software</h3><p>Build reliable applications with classes, modules, and a practical standard library.</p></a>
+            <a class="use-card" href="/guides/systems_programming/"><span class="use-icon" aria-hidden="true">⌘</span><h3>Systems work</h3><p>Use direct low-level access when the problem calls for it.</p></a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section feature-section shell">
+        <article class="feature-row">
+          <div class="feature-copy"><h2>Safe</h2><h3>Safety by default. Control at the boundary.</h3><p>Zap keeps unsafe operations explicit, so the parts of your program that need extra control stay easy to find and review.</p></div>
+          <CodePanel html={safeExample} compact />
+        </article>
+        <article class="feature-row feature-row-reverse">
+          <div class="feature-copy"><h2>Error handling, made straightforward.</h2><h3>Keep failure paths clear and local.</h3><p>Use <code>?</code>, <code>or</code>, and <code>or err</code> to handle expected failures directly, without exceptions or hidden runtime behavior.</p></div>
+          <CodePanel html={checkoutExample} compact />
+        </article>
+        <article class="feature-row">
+          <div class="feature-copy"><h2>Keep the code you already trust.</h2><h3>Adopt Zap without a rewrite.</h3><p>Call C libraries through FFI and introduce Zap to an existing codebase one component at a time.</p></div>
+          <CodePanel html={legacyExample} compact />
+        </article>
+      </section>
+
+      <section class="closing shell">
+        <h2>Make something that lasts.</h2>
+        <a class="button button-primary" href="/getting-started/">Open the documentation <span aria-hidden="true">→</span></a>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="shell footer-bottom">
+        <span>© 2026 Zap programming language</span>
+      </div>
+    </footer>
+  </body>
+</html>

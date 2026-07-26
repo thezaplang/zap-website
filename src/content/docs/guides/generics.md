@@ -1,144 +1,70 @@
 ---
 title: Generics
-description: Write reusable, type-safe code with generic functions, structs, classes, where constraints, and iftype in Zap.
+description: Write functions and types that are checked for each concrete type.
 ---
 
-Zap supports **static generics** — type parameters are resolved at compile time, so there's no runtime overhead and invalid specializations are caught early.
+Generics let one declaration work with several types. Zap specializes generic
+code at compile time.
 
 ## Generic functions
 
-Add type parameters after the function name with `<T>`:
+Declare type parameters after the function name:
 
 ```zap
 fun identity<T>(value: T) T {
     return value;
 }
 
-fun first<T>(a: T, b: T) T {
-    return a;
-}
-
 fun main() Int {
-    var n: Int    = identity(42);       // T inferred as Int
-    var s: String = identity("hello");  // T inferred as String
-    var f: Int    = first(10, 20);      // 10
-
-    // Explicit type argument when inference isn't enough:
-    var x: Int = identity<Int>(99);
-
-    return 0;
+    var number = identity(42);
+    var text = identity("Zap");
+    return number;
 }
 ```
 
-The compiler infers `T` from the call arguments in most cases.
-
----
-
-## Multiple type parameters
+The compiler normally infers `T` from the arguments. You can also write an
+explicit type argument:
 
 ```zap
-fun zip<A, B>(a: A, b: B) A {
-    return a;
-}
-
-fun swap<A, B>(a: A, b: B) B {
-    return b;
-}
-
-fun main() Int {
-    var r: Int    = zip(42, "hello");   // A=Int, B=String → 42
-    var s: String = swap(42, "world");  // A=Int, B=String → "world"
-    return 0;
-}
+var number = identity<Int>(42);
 ```
 
----
-
-## Generic structs and records
+Use commas for multiple type parameters:
 
 ```zap
-struct Box<T> {
-    value: T,
-    label: String,
-}
-
 record Pair<A, B> {
     first: A,
     second: B,
 }
 
-fun main() Int {
-    var intBox: Box<Int>    = Box<Int>{ value: 42, label: "answer" };
-    var strBox: Box<String> = Box<String>{ value: "hi", label: "greeting" };
-
-    var coords: Pair<Float, Float> = Pair<Float, Float>{ first: 1.0, second: 2.0 };
-    var mixed:  Pair<Int, String>  = Pair<Int, String>{ first: 1, second: "one" };
-
-    var n: Int = intBox.value;      // 42
-    var x: Float = coords.first;   // 1.0
-
-    return 0;
-}
+var entry = Pair<String, Int> { first: "apples", second: 3 };
 ```
-
-You can write functions that work with generic types:
-
-```zap
-fun unwrap<T>(box: Box<T>) T {
-    return box.value;
-}
-
-fun main() Int {
-    var b: Box<Int> = Box<Int>{ value: 7, label: "lucky" };
-    var v: Int = unwrap(b);  // 7
-    return 0;
-}
-```
-
----
 
 ## Generic classes
 
 ```zap
-class Stack<T> {
-    priv items: [16]T;
-    priv size: Int;
+class Box<T> {
+    priv value: T;
 
-    fun init() {
-        self.size = 0;
+    fun init(value: T) {
+        self.value = value;
     }
 
-    pub fun push(item: T) {
-        self.items[self.size] = item;
-        self.size = self.size + 1;
-    }
-
-    pub fun pop() T {
-        self.size = self.size - 1;
-        return self.items[self.size];
-    }
-
-    pub fun count() Int {
-        return self.size;
+    pub fun get() T {
+        return self.value;
     }
 }
 
 fun main() Int {
-    var s: Stack<Int> = new Stack<Int>();
-    s.push(10);
-    s.push(20);
-    s.push(30);
-
-    var top: Int = s.pop();  // 30
-    return s.count();        // 2
+    var box = new Box<String>("hello");
+    println(box.get());
+    return 0;
 }
 ```
 
----
+## Constraints
 
-## `where` constraints
-
-Use `where` to require that a type parameter satisfies an interface:
+A `where` clause requires a type argument to inherit from a given class:
 
 ```zap
 class Animal {
@@ -149,77 +75,30 @@ class Dog : Animal {
     pub fun sound() Int { return 1; }
 }
 
-class Cat : Animal {
-    pub fun sound() Int { return 2; }
-}
-
-fun makeNoise<T>(animal: T) Int where T: Animal {
-    return animal.sound();
-}
-
-class Cage<T> where T: Animal {
-    priv pet: T;
-
-    fun init(pet: T) {
-        self.pet = pet;
-    }
-
-    pub fun listen() Int {
-        return self.pet.sound();
-    }
-}
-
-fun main() Int {
-    var dog: Dog = new Dog();
-    var cat: Cat = new Cat();
-
-    var d: Int = makeNoise(dog);  // 1
-    var c: Int = makeNoise(cat);  // 2
-
-    var cage: Cage<Dog> = new Cage<Dog>(new Dog());
-    var sound: Int = cage.listen();  // 1
-
-    return 0;
+fun speak<T>(value: T) Int where T: Animal {
+    return value.sound();
 }
 ```
 
-If the constraint isn't satisfied, the compiler emits `S2002` at the call site.
+The compiler rejects `speak(value)` when the type of `value` does not satisfy
+the constraint.
 
----
+## Compile-time type branches
 
-## `iftype` — compile-time type branching
-
-Inside a generic function or method, `iftype` lets you branch on the concrete type:
+Use `iftype` inside generic code when an implementation depends on the concrete
+type:
 
 ```zap
-fun describe<T>(value: T) String {
+fun kind<T>(value: T) String {
     iftype T == Int {
         return "integer";
     } else iftype T == Bool {
         return "boolean";
-    } else iftype T == String {
-        return "string";
     } else {
-        return "unknown";
+        return "other";
     }
-}
-
-fun main() Int {
-    var a: String = describe(42);     // "integer"
-    var b: String = describe(true);   // "boolean"
-    var c: String = describe("hi");   // "string"
-    return 0;
 }
 ```
 
-`iftype` is evaluated at compile time — only the matching branch is compiled for each specialization. This is useful for type-specific optimizations without runtime overhead.
-
----
-
-## Common Diagnostics
-
-| Code | Meaning |
-|------|---------|
-| `S2001` | Undefined generic type or type parameter |
-| `S2002` | Type argument doesn't satisfy `where` constraint |
-| `S2012` | No matching overload — generic function can't be instantiated with given types |
+Only the selected branch is compiled for a specialization. Prefer ordinary
+generic code when every type can share the same implementation.

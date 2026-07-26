@@ -1,73 +1,52 @@
 ---
 title: std/string
-description: String length, character access, slicing, comparison, and building strings in Zap.
+description: Work with owned strings, borrowed string views, and incremental text building.
 ---
 
-`std/string` provides functions for working with `String` values.
-
-## API
+`String` owns its storage. `StringView` borrows a range from a string. The
+automatic prelude already provides `StringView`, `len`, `at`, `slice`, `eq`,
+`view`, `startsWith`, and `indexOf`.
 
 ```zap
-pub ext fun len(s: String) Int;
-pub ext fun at(s: String, i: Int) Char;
-pub ext fun slice(s: String, start: Int, len: Int) String;
-pub ext fun eq(a: String, b: String) Bool;
+import "std/string" as string;
 
-pub fun stringLen(s: String) Int;
-pub fun fromChar(c: Char) String;
-pub fun pushChar(s: String, c: Char) String;
+var source = "hello";
+var tail: StringView = slice(source, 1, 4);
+println(string.owned(tail));
 ```
 
-| Function | Description |
-|----------|-------------|
-| `len(s)` | Returns the number of characters in `s` |
-| `at(s, i)` | Returns the character at index `i` (zero-based) |
-| `slice(s, start, len)` | Returns a substring starting at `start` with length `len` |
-| `eq(a, b)` | Returns `true` if `a` and `b` are equal |
-| `fromChar(c)` | Converts a `Char` to a single-character `String` |
-| `pushChar(s, c)` | Appends character `c` to string `s`, returns new string |
-
-## Examples
-
-### Basic string operations
+Import the module for the remaining helpers:
 
 ```zap
-import "std/string";
-import "std/io" { println, printInt };
+import "std/string" as string;
+```
 
-fun main() Int {
-    var name: String = "Zap";
+## Functions
 
-    printInt(string.len(name));                    // 3
-    println(string.fromChar(string.at(name, 0)));  // "Z"
-    println(string.slice(name, 1, 2));             // "ap"
+| Function | Result |
+| --- | --- |
+| `stringLen(s: String) Int` | Length of an owned string |
+| `fromChar(c: Char) String` | One-character owned string |
+| `pushChar(s: String, c: Char) String` | A new string with `c` appended |
+| `owned(v: StringView) String` | Copies a view into an owned string |
+| `trim(v: StringView) String` | Copies the view without surrounding ASCII whitespace |
+| `splitOnce(v: StringView, delim: Char) SplitPair` | Splits at the first delimiter |
 
-    var same: Bool = string.eq("hello", "hello");  // true
-    var diff: Bool = string.eq("hello", "world");  // false
+`SplitPair` contains `left`, `right`, and `found` fields.
 
-    return 0;
+## TextBuf
+
+`TextBuf` collects text and returns `self` from `push` and `pushChar`:
+
+```zap
+import "std/string" as string;
+
+fun greeting(name: String) String {
+    var buffer = new string.TextBuf();
+    buffer.push("Hello, ").push(name).pushChar('!');
+    return buffer.build();
 }
 ```
 
-### Building strings character by character
-
-```zap
-import "std/string";
-import "std/io" { println };
-
-fun reverse(s: String) String {
-    var result: String = "";
-    var i: Int = string.len(s) - 1;
-    while i >= 0 {
-        result = string.pushChar(result, string.at(s, i));
-        i = i - 1;
-    }
-    return result;
-}
-
-fun main() Int {
-    println(reverse("hello"));  // "olleh"
-    println(reverse("Zap"));    // "paZ"
-    return 0;
-}
-```
+Methods: `clear()`, `len()`, `isEmpty()`, `push(text)`, `pushChar(c)`,
+`build()`, and `view()`.

@@ -1,0 +1,12 @@
+---
+interface Props {
+  html: string;
+  compact?: boolean;
+}
+
+const { html, compact = false } = Astro.props;
+---
+
+<div class:list={['code-panel', { 'compact-code-panel': compact }]}>
+  <div class="code-rendered" set:html={html}></div>
+</div>

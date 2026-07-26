@@ -1,13 +1,22 @@
 ---
 title: std/error
-description: Structured error types used by higher-level standard library APIs in Zap.
+description: A general structured error value for APIs that need a message and numeric code.
 ---
 
-`std/error` provides a structured `Error` type and `ErrorKind` enum used by standard library functions that can fail.
+`std/error` defines data types. It does not replace the `T!E` failure syntax or
+require application-specific errors to use this representation.
 
-For failable functions in your own code, define your own `@error` enum — see [Error Handling](/guides/error_handling/).
+```zap
+import "std/error" as error;
 
-## API
+var problem = error.Error {
+    kind: error.ErrorKind.NotFound,
+    code: 2,
+    message: "configuration not found",
+};
+```
+
+## Types
 
 ```zap
 pub enum ErrorKind {
@@ -24,64 +33,10 @@ pub struct Error {
     code: Int,
     message: String,
 }
-
-pub alias Err = Error;
-pub alias Kind = ErrorKind;
 ```
 
-| Symbol | Description |
-|--------|-------------|
-| `ErrorKind` | Enum of common error categories |
-| `Error` | Structured error with kind, numeric code, and message |
-| `Err` | Alias for `Error` |
-| `Kind` | Alias for `ErrorKind` |
+`Err` aliases `Error`, and `Kind` aliases `ErrorKind`.
 
-## Examples
-
-### Creating and inspecting errors
-
-```zap
-import "std/error" { Err, Kind };
-import "std/io" { println };
-
-fun main() Int {
-    var err: Err = Err{
-        kind: Kind.NotFound,
-        code: 2,
-        message: "file was not found",
-    };
-
-    if err.kind == Kind.NotFound {
-        println("Error: " ~ err.message);
-        return 0;
-    }
-
-    return 1;
-}
-```
-
-### Handling different error kinds
-
-```zap
-import "std/error";
-import "std/io" { println };
-
-fun describeError(err: error.Error) String {
-    if err.kind == error.ErrorKind.NotFound       { return "not found"; }
-    if err.kind == error.ErrorKind.PermissionDenied { return "permission denied"; }
-    if err.kind == error.ErrorKind.InvalidInput   { return "invalid input"; }
-    if err.kind == error.ErrorKind.AlreadyExists  { return "already exists"; }
-    if err.kind == error.ErrorKind.Io             { return "I/O error"; }
-    return "unknown error";
-}
-
-fun main() Int {
-    var e: error.Error = error.Error{
-        kind: error.ErrorKind.PermissionDenied,
-        code: 13,
-        message: "access denied",
-    };
-    println(describeError(e));  // "permission denied"
-    return 0;
-}
-```
+For failures in your own API, choose an `@error enum`, `@error struct`, or
+`@error class` according to the data and behavior callers need. See
+[Error handling](/guides/error_handling/).

@@ -1,0 +1,12 @@
+<svg width="64" height="64" viewBox="0 0 450 397" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M183.99 312.721H256.034L205.049 397H0C50.6431 337.237 83.4702 303.73 134.113 243.966L263.793 90.933H42.1182L110.837 0H450L312.562 156.36L183.99 312.721Z" fill="url(#zap-gradient)"/>
+  <path d="M227.217 397L278.202 312.721H436.699L367.713 397H227.217Z" fill="url(#zap-gradient)"/>
+  <defs>
+    <linearGradient id="zap-gradient" x1="118.596" y1="-1.10894" x2="369.27" y2="392.449" gradientUnits="userSpaceOnUse">
+      <stop offset="0.100446" stop-color="#4849FA"/>
+      <stop offset="0.417273" stop-color="#2563FF"/>
+      <stop offset="0.602729" stop-color="#4849F9"/>
+      <stop offset="1" stop-color="#6A2FF4"/>
+    </linearGradient>
+  </defs>
+</svg>

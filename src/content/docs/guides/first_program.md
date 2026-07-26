@@ -1,34 +1,54 @@
 ---
-title: First Program
-description: Compile and run your first Zap program.
+title: Your First Program
+description: Build a small Zap program with Thor and understand each part.
 ---
 
-Create a file called `hello.zp`:
+Create a project:
+
+```bash
+thor new hello
+cd hello
+```
+
+Then replace `src/main.zp` with:
 
 ```zap
-import "std/io" { println };
-
 fun main() Int {
     println("Hello, Zap!");
     return 0;
 }
 ```
 
-Compile it with the compiler built from `zap/`:
+Build and run it:
 
 ```bash
-./zap/build/zapc hello.zp
+thor run
 ```
 
-By default, `zapc` builds an executable. On Unix-like systems, if you did not pass `-o`, the output is `a.out`:
+The program prints:
 
-```bash
-./a.out
+```text
+Hello, Zap!
 ```
 
-## Notes
+`main` is the executable entry point. Its `Int` result becomes the process exit
+code. `println` is already in scope through the prelude.
 
-- `main` usually returns `Int`.
-- Statements end with `;`.
-- Import functions from `std/io` for console output.
-- If you use raw pointers or manual allocation later, compile with `--allow-unsafe`.
+Functions that do not return a value omit the return type:
+
+```zap
+fun announce(message: String) {
+    println(message);
+}
+
+fun main() Int {
+    announce("compiled and running");
+    return 0;
+}
+```
+
+Statements end with semicolons. Blocks use braces. Zap does not require a
+package declaration for a single-file program. Thor reads the project's
+`thor.toml`; its default entry point is `src/main.zp`.
+
+Next, read [Variables](/guides/variables/).
